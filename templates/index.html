@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Story Generator – NovelForge</title>
+  
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+  /* ========== GLOBAL STYLES ========== */
+  :root {
+    --primary: #6c5ce7;
+    --primary-dark: #5649c0;
+    --primary-light: #a29bfe;
+    --secondary: #fd79a8;
+    --secondary-dark: #e84393;
+    --accent: #00cec9;
+    --text: #2d3436;
+    --text-light: #636e72;
+    --background: #f9f9ff;
+    --card-bg: #fff;
+    --border-radius: 16px;
+    --shadow-sm: 0 4px 20px rgba(108, 92, 231, 0.1);
+    --shadow-md: 0 15px 30px rgba(108, 92, 231, 0.15);
+    --shadow-lg: 0 20px 40px rgba(108, 92, 231, 0.2);
+    --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+    --gradient-accent: linear-gradient(135deg, var(--accent), #00b4b1);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+    padding: 2rem;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(162, 155, 254, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 90% 80%, rgba(253, 121, 168, 0.08) 0%, transparent 25%);
+  }
+
+  /* ========== CARD CONTAINER ========== */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    padding: 3.5rem 3.5rem 3rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(108, 92, 231, 0.1);
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: var(--gradient-primary);
+  }
+
+  /* Decorative elements */
+  .decorative-corner {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .corner-top-right {
+    top: 0;
+    right: 0;
+    background: radial-gradient(circle at 100% 0%, var(--primary-light) 0%, transparent 70%);
+  }
+
+  .corner-bottom-left {
+    bottom: 0;
+    left: 0;
+    background: radial-gradient(circle at 0% 100%, var(--secondary) 0%, transparent 70%);
+  }
+
+  /* ========== TYPOGRAPHY ========== */
+  h1 {
+    text-align: center;
+    font-size: 2.8rem;
+    font-weight: 900;
+    margin-bottom: 2.5rem;
+    font-family: 'Playfair Display', serif;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    line-height: 1.2;
+  }
+
+  h1::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+  }
+
+  /* ========== FORM ELEMENTS ========== */
+  .form-group {
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .half-width {
+    flex: 1;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+    transition: var(--transition);
+  }
+
+  input[type="text"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 1.1rem 1.3rem;
+    border: 2px solid #dfe6e9;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    background: #f8f9fa;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+  }
+
+  input[type="text"]:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
+    background: #fff;
+    transform: translateY(-2px);
+  }
+
+  textarea {
+    min-height: 160px;
+    resize: vertical;
+    line-height: 1.8;
+  }
+
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23636e72' stroke-width='2' viewBox='0 0 24 24'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1.2rem center;
+    background-size: 1rem;
+    cursor: pointer;
+  }
+
+  /* ========== BUTTON ========== */
+  button {
+    width: 100%;
+    padding: 1.25rem 2rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--gradient-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+
+  button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: 0.5s;
+  }
+
+  button:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
+  }
+
+  button:hover::before {
+    left: 100%;
+  }
+
+  /* ========== LOADING STATE ========== */
+  .loading {
+    color: var(--text-light);
+    font-style: italic;
+    animation: pulse 1.5s infinite;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* ========== ANIMATIONS ========== */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 768px) {
+    body {
+      padding: 1.5rem;
+    }
+
+    .container {
+      padding: 2.5rem 1.8rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-row {
+      flex-direction: column;
+      gap: 1.8rem;
+      margin-bottom: 1.8rem;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      padding: 1rem 1.2rem;
+    }
+  }
+
+  /* ========== SPECIAL EFFECTS ========== */
+  .form-group:focus-within label {
+    color: var(--primary);
+  }
+
+  .form-group:hover label {
+    transform: translateX(4px);
+  }
+
+  /* Floating animation for decorative elements */
+  .decorative-corner {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .corner-top-right {
+    animation-delay: 0.5s;
+  }
+
+  /* Tooltip for form elements */
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    margin-left: 0.5rem;
+    color: var(--primary-light);
+    cursor: help;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: var(--text);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 0.5rem;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.8rem;
+    font-weight: normal;
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Decorative elements -->
+  <div class="decorative-corner corner-top-right"></div>
+  <div class="decorative-corner corner-bottom-left"></div>
+
+  <h1>
+    <i class="fas fa-magic" style="margin-right: 12px;"></i>
+    SmartNovel-AI Generator
+  </h1>
+
+  <form method="POST">
+    <div class="form-group">
+      <label for="language">
+        Language
+        <span class="tooltip">
+          <i class="fas fa-info-circle"></i>
+          <span class="tooltiptext">Choose the language for your generated story</span>
+        </span>
+      </label>
+      <select id="language" name="language" required>
+        <option value="english">English</option>
+        <option value="hindi">Hindi (हिंदी)</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group half-width">
+        <label for="genre">
+          Genre
+          <span class="tooltip">
+            <i class="fas fa-info-circle"></i>
+            <span class="tooltiptext">Select the genre that fits your story idea</span>
+          </span>
+        </label>
+        <select id="genre" name="genre" required>
+          <option value="fantasy">Fantasy</option>
+          <option value="science fiction">Science Fiction</option>
+          <option value="mystery">Mystery</option>
+          <option value="romance">Romance</option>
+          <option value="horror">Horror</option>
+          <option value="adventure">Adventure</option>
+          <option value="historical">Historical</option>
+        </select>
+      </div>
+      
+      <div class="form-group half-width">
+        <label for="tone">
+          Tone
+          <span class="tooltip">
+            <i class="fas fa-info-circle"></i>
+            <span class="tooltiptext">Choose the emotional tone of your story</span>
+          </span>
+        </label>
+        <select id="tone" name="tone" required>
+          <option value="lighthearted">Lighthearted</option>
+          <option value="serious">Serious</option>
+          <option value="humorous">Humorous</option>
+          <option value="dark">Dark</option>
+          <option value="inspirational">Inspirational</option>
+          <option value="suspenseful">Suspenseful</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="length">
+        Story Length
+        <span class="tooltip">
+          <i class="fas fa-info-circle"></i>
+          <span class="tooltiptext">How long should the generated story be?</span>
+        </span>
+      </label>
+      <select id="length" name="length" required>
+        <option value="short">Short (1-2 paragraphs)</option>
+        <option value="medium" selected>Medium (3-5 paragraphs)</option>
+        <option value="long">Long (6+ paragraphs)</option>
+        <option value="chapter">Chapter (500+ words)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="setting">
+        Setting / World
+        <span class="tooltip">
+          <i class="fas fa-info-circle"></i>
+          <span class="tooltiptext">Describe the world or setting for your story</span>
+        </span>
+      </label>
+      <input type="text" id="setting" name="setting" placeholder="e.g., Futuristic Mars colony, Medieval kingdom, Modern-day Tokyo...">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group half-width">
+        <label for="protagonist">
+          Main Character
+          <span class="tooltip">
+            <i class="fas fa-info-circle"></i>
+            <span class="tooltiptext">Name or describe your protagonist</span>
+          </span>
+        </label>
+        <input type="text" id="protagonist" name="protagonist" placeholder="Protagonist name or description">
+      </div>
+      <div class="form-group half-width">
+        <label for="antagonist">
+          Antagonist (optional)
+          <span class="tooltip">
+            <i class="fas fa-info-circle"></i>
+            <span class="tooltiptext">Name or describe your villain (if applicable)</span>
+          </span>
+        </label>
+        <input type="text" id="antagonist" name="antagonist" placeholder="Villain name or description">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="prompt">
+        Story Prompt / Plot Idea
+        <span class="tooltip">
+          <i class="fas fa-info-circle"></i>
+          <span class="tooltiptext">Describe your story idea or starting point</span>
+        </span>
+      </label>
+      <textarea id="prompt" name="prompt" required placeholder="Describe your story idea or starting point... (e.g., A young mage discovers a forbidden spell that could save their kingdom but at great personal cost)"></textarea>
+    </div>
+
+    <button type="submit">
+      <i class="fas fa-wand-magic-sparkles"></i>
+      Generate My Story
+    </button>
+  </form>
+</div>
+
+<script>
+  // Add subtle animations when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.container');
+    container.style.opacity = '0';
+    container.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+      container.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      container.style.opacity = '1';
+      container.style.transform = 'translateY(0)';
+    }, 100);
+    
+    // Add hover effect to form groups
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach(group => {
+      group.addEventListener('mouseenter', () => {
+        group.querySelector('label').style.transform = 'translateX(6px)';
+      });
+      group.addEventListener('mouseleave', () => {
+        group.querySelector('label').style.transform = 'translateX(0)';
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
